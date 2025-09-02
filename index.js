@@ -1,6 +1,6 @@
-import colecaoUf from "./dados/dados.js";
+//import colecaoUf from "./dados/dados.js";
 import express from 'express';
-
+import { buscarUfs, buscarUfPorId, buscarUFsPorNome } from './servicos/servicos.js';
 const app = express();
 
 const buscarUFsPorNome = (nomeUf) => {
@@ -17,21 +17,15 @@ app.get('/ufs', (req, res) => {
     }
 });
 app.get('/ufs/:iduf', (req, res) => {
-    const iduf = parseInt(req.params.iduf);
-    const uf = colecaoUf.find(u => u.id === iduf);
-    res.json(uf)
-    if (!(isNaN(iduf))) {
-        uf = colecaoUf.find(u => u.id === iduf);
-        if (!uf) {
-            mensagemErro = 'UF não encontrada';
-        }
-    } else {
-        mensagemErro = 'Requisição inválida';
-    }
+    const idUf = parseInt(req.params.iduf);
+    const uf = buscarUfsPorId(idUf);
+
     if (uf) {
-        res.json(uf);
-    } else {
-        res.status(404).json({ "erro": mensagemErro });
+        res.json(uf)
+    } else if(isNaN(idUf)) {
+        res.status(400).json({ "erro": "Requisição inválida" });
+    }else{
+        res.status(404).json({ "erro": "UF não encontrada" });
     }
 });
 
