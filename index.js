@@ -3,8 +3,18 @@ import express from 'express';
 
 const app = express();
 
+const buscarUFsPorNome = (nomeUf) => {
+    return colecaoUf.filter(uf => uf.nome.toLowerCase().includes(nomeUf.toLowerCase()))
+};
+
 app.get('/ufs', (req, res) => {
-    res.json(colecaoUf)
+    const nomeUf = req.query.busca;
+    const resultado = nomeUf ? buscarUFsPorNome(nomeUf) : colecaoUf;
+    if (resultado.length > 0) {
+        res.json(resultado);
+    } else {
+        res.status(404).send({"erro": "Nenhuma UF encontrada" });
+    }
 });
 app.get('/ufs/:iduf', (req, res) => {
     const iduf = parseInt(req.params.iduf);
