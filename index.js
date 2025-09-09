@@ -1,35 +1,55 @@
-//import colecaoUf from "./dados/dados.js";
 import express from 'express';
-import { buscarUfs, buscarUfPorId, buscarUFsPorNome } from './servicos/servicos.js';
+import { buscarUFsPorNome, buscarUfPorId, buscarUfs, buscarUfsPorSigla } from './servicos/servicos.js';
+
 const app = express();
 
-const buscarUFsPorNome = (nomeUf) => {
-    return colecaoUf.filter(uf => uf.nome.toLowerCase().includes(nomeUf.toLowerCase()))
-};
-
 app.get('/ufs', (req, res) => {
-    const nomeUf = req.query.busca;
-    const resultado = nomeUf ? buscarUFsPorNome(nomeUf) : colecaoUf;
+  const nomeUf = req.query.busca;
+  try {
+    const resultado = nomeUf ? buscarUFsPorNome(nomeUf) : buscarUfs();
     if (resultado.length > 0) {
-        res.json(resultado);
+      res.json(resultado);
     } else {
-        res.status(404).send({"erro": "Nenhuma UF encontrada" });
+      res.status(404).send({ "erro": "Nenhuma UF encontrada" });
     }
+  } catch (error) {
+    res.status(500).send({ "erro": "Erro ao buscar UFs" });
+  }
 });
-app.get('/ufs/:iduf', (req, res) => {
-    const idUf = parseInt(req.params.iduf);
-    const uf = buscarUfsPorId(idUf);
 
+app.get('/ufs/:iduf', (req, res) => {
+  const iduf = req.params.iduf;
+  if (isNaN(parseInt(iduf))) {
+    return res.status(400).send({ "erro": "Requisição inválida" });
+  }
+  
+  try {
+    const uf = buscarUfPorId(iduf);
     if (uf) {
-        res.json(uf)
-    } else if(isNaN(idUf)) {
-        res.status(400).json({ "erro": "Requisição inválida" });
-    }else{
-        res.status(404).json({ "erro": "UF não encontrada" });
+      res.json(uf);
+    } else {
+      res.status(404).send({ "erro": "UF não encontrada" });
     }
+  } catch (error) {
+    res.status(500).send({ "erro": "Erro ao buscar UF" });
+  }
+});
+
+app.get('/ufs/sigla', (req, res) => {
+  const siglaUf = req.query.sigla;
+  try {
+    const resultado = siglaUf ? buscarUfsPorSigla(siglaUf) : buscarUfs();
+    if (resultado.length > 0) {
+      res.json(resultado);
+    } else {
+      res.status(404).send({ "erro": "Nenhuma UF encontrada com essa sigla" });
+    }
+  } catch (error) {
+    res.status(500).send({ "erro": "Erro ao buscar UFs por sigla" });
+  }
 });
 
 app.listen(8080, () => {
-    let data = new Date();
-    console.log('Servidor iniciado na porta 8080: ' + data);
+    var data = new Date
+    console.log('Servidor iniciado na porta 8080' + data );
 });
