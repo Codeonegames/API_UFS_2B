@@ -50,6 +50,6 @@ app.get('/ufs/sigla', (req, res) => {
 });
 
 app.listen(8080, () => {
-    var data = new Date
-    console.log('Servidor iniciado na porta 8080' + data );
+    const data = new Date();
+    console.log('Servidor iniciado na porta 8080 - ' + data.toLocaleString());
 });
