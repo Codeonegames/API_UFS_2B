@@ -1,5 +1,6 @@
-import colecaoUf from "../dados/dados";
-
+import colecaoUf from "../dados/dados.js";
+import express from 'express'
+const app = express();
 export const buscarUfs = () => {
     return colecaoUf;
 };
